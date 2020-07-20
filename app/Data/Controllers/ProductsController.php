@@ -1,24 +1,30 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Data\Controllers;
 
+use App\Data\Repositories\Products\ProductsRepository;
 use App\Products;
 use Illuminate\Http\Request;
-use Validator;
 
 class ProductsController extends Controller
 {
+    protected $products_repository;
+
+    public function __construct(ProductsRepository $products_repository)
+    {
+        $this->products_repository = $products_repository;
+    }
+
     public function index()
     {
-        $products = Products::get();
+        $products = $this->products_repository->all();
 
         return response($products, 200);
     }
 
-    public function store(Request $request)
+    public function create()
     {
-        $inputs = $request->all();
-        $products = Products::Create($inputs);
+        $products = $this->products_repository->create();
 
         $response = [
             'success' => true,
@@ -30,9 +36,9 @@ class ProductsController extends Controller
     }
 
     public function show(Products $products, $id)
-    {
 
-        $products = Products::find($id);
+    {
+        $products = $this->products_repository->show($id);
 
         if (is_null($products)) {
             $response = [
@@ -54,7 +60,7 @@ class ProductsController extends Controller
 
     public function update(Request $request, $id)
     {
-        $products = Products::find($id);
+        $products = $this->products_repository->update($request, $id);
         $products->update($request->all());
 
         return response()->json([
@@ -66,8 +72,7 @@ class ProductsController extends Controller
 
     public function destroy($id)
     {
-        $products = Products::findOrFail($id);
-        $products->delete();
+        $this->products_repository->delete($id);
 
         return response()->json([
             'success' => true,

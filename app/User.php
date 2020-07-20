@@ -38,8 +38,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function products()
+    // public function products()
+    // {
+    //     return $this->hasMany(Products::class);
+    // }
+
+    public function createAccessToken($user)
     {
-        return $this->hasMany(Products::class);
+        return $user->createToken('Laravel Password Grant Client')->accessToken;
     }
 }

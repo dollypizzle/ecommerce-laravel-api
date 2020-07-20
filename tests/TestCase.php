@@ -9,33 +9,29 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    public function setUp():void
+    {
+        parent::setUp();
+
+        \Artisan::call('passport:install');
+
+        $this->user = create('App\User');
+
+        $this->withoutExceptionHandling();
+
+    }
+
     protected function signIn($user = null)
     {
-        $user = $user ?: create('App\User');
+        $user = create('App\User');
 
-        $this->actingAs($user);
+        //$user = factory('App\User')->create();
+        $token = $user->createAccessToken($user);
+        $header = ['Authorization' => "Bearer $token"];
 
-        return $this;
+        // $this->actingAs($token);
+
+        return $header;
     }
 
-    protected function disableExceptionHandling()
-    {
-        $this->oldExceptionHandler = $this->app->make(ExceptionHandler::class);
-
-        $this->app->instance(ExceptionHandler::class, new class extends Handler {
-            public function __construct() {}
-            public function report(\Throwable $exception ) {}
-            public function render($request, \Throwable $exception) {
-                throw $exception;
-            }
-        });
-    }
-
-    protected function withExceptionHandling()
-    {
-
-        $this->app->instance(ExceptionHandler::class, $this->oldExceptionHandler);
-
-        return $this;
-    }
 }
