@@ -7,38 +7,21 @@ use App\User;
 class UsersRepository implements EloquentRepository
 {
 
-    public function register()
+    protected $user;
+
+    public function __construct(User $user)
     {
-        request()->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|',
-            'phonenumber' => 'required|numeric',
-        ]);
-
-        $user = new User([
-            'firstname' => request()->firstname,
-            'lastname' => request()->lastname,
-            'email' => request()->email,
-            'phonenumber' => request()->phonenumber,
-            'password' => bcrypt(request()->password),
-        ]);
-
-        $user->save();
-        return $user;
+        $this->user = $user;
     }
 
-    public function login()
+    public function create($input)
     {
-        request()->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string'
-        ]);
 
-        $credentials = request(['email', 'password']);
+        $user = new User($input);
 
-        return $credentials;
+        $user->save();
+
+        return $user;
     }
 
 }

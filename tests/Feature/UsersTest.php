@@ -48,12 +48,15 @@ class UsersTest extends TestCase
     /** @test */
     function a_user_can_login()
     {
-        $user = factory('App\User')->create([
+        create('App\User', [
             'email' => 'testlogin@user.com',
             'password' => bcrypt('toptal123'),
         ]);
 
-        $input = ['email' => 'testlogin@user.com', 'password' => 'toptal123'];
+        $input = [
+            'email' => 'testlogin@user.com',
+            'password' => 'toptal123'
+        ];
 
         $this->post(route('login'), [
             'email' => 'john@topl.com',
@@ -82,16 +85,10 @@ class UsersTest extends TestCase
     /** @test */
     function a_user_can_logout()
     {
-        $user = factory('App\User')->create(['email' => 'user@test.com']);
-        $token = $user->createAccessToken($user);
-        $headers = ['Authorization' => "Bearer $token"];
+        $header = $this->signIn();
 
-        $this->json('get', '/api/products', [], $headers)->assertStatus(200);
-        $this->json('post', '/api/logout', [], $headers)->assertStatus(200);
-
-        $user = User::find($user->id);
-
-        $this->assertEquals(null, $user->api_token);
+        $this->json('post', '/api/logout', [], $header)
+            ->assertStatus(200);
     }
 
 

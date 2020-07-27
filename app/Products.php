@@ -7,15 +7,13 @@ use Auth;
 
 class Products extends Model
 {
-    protected $table = 'products';
+    protected $guarded = [];
 
     protected $with = ['owner'];
 
-    protected $guarded = [];
-
     public function path()
     {
-        return "api/product/{$this->id}";
+        return "/api/products/{$this->id}";
     }
 
     public function owner()
@@ -23,14 +21,4 @@ class Products extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    // protected static function booted()
-    // {
-    //     static::creating(function ($products) {
-    //         $products->owner_id = Auth::id();
-    //     });
-
-    //     static::updating(function ($products) {
-    //         $products->owner_id = Auth::id();
-    //     });
-    // }
 }
