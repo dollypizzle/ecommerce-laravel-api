@@ -17,23 +17,8 @@ class ProductsController extends Controller
 
     public function store(Request $request)
     {
-
-        request()->validate([
-            'name' => 'required',
-            'brand' => 'required',
-            'image' => 'required',
-            'price' => 'required',
-            'description' => 'required'
-        ]);
-
-        $products = Products::create([
-            'owner_id' => auth()->id(),
-            'name' => request('name'),
-            'brand' => request('brand'),
-            'image' => request('image'),
-            'price' => request('price'),
-            'description' => request('description'),
-        ]);
+        $inputs = $request->all();
+        $products = Products::Create($inputs);
 
         $response = [
             'success' => true,
@@ -42,7 +27,6 @@ class ProductsController extends Controller
         ];
 
         return response()->json($response, 200);
-
     }
 
     public function show(Products $products, $id)
