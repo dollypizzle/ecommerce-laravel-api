@@ -35,9 +35,9 @@ $factory->define(Products::class, function (Faker $faker) {
         'owner_id'=> function() {
             return factory('App\User')->create()->id;
         },
-        'name' => $faker->word,
-        'brand' => $faker->word,
-        'image' => $faker->imageUrl,
+        'name' => $faker->sentence,
+        'brand' => $faker->sentence,
+        'image' => $faker->sentence,
         'price' => $faker->randomNumber,
         'description' => $faker->sentences
     ];

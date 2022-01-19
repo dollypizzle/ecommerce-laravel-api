@@ -11,20 +11,11 @@ class Products extends Model
 
     protected $with = ['owner'];
 
-    protected $fillable = [
-        'owner_id',
-        'name',
-        'brand',
-        'price',
-        'image',
-        'description'
-    ];
-
     protected $guarded = [];
 
     public function path()
     {
-        return "/products/{$this->id}";
+        return "api/product/{$this->id}";
     }
 
     public function owner()
@@ -32,10 +23,14 @@ class Products extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    protected static function booted()
-    {
-        static::creating(function ($products) {
-            $products->owner_id = Auth::id();
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::creating(function ($products) {
+    //         $products->owner_id = Auth::id();
+    //     });
+
+    //     static::updating(function ($products) {
+    //         $products->owner_id = Auth::id();
+    //     });
+    // }
 }

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('login', 'AuthController@login');
+Route::post('login', 'AuthController@login')->name('login');
 Route::post('register', 'AuthController@register');
 
 Route::group(['middleware' => 'auth:api'], function(){
@@ -26,8 +26,8 @@ Route::group(['middleware' => 'auth:api'], function(){
 });
 
 Route::get('/products', 'ProductsController@index');
-Route::post('/products', 'ProductsController@store')->middleware('auth:api');
+Route::post('/products', 'ProductsController@create')->middleware('auth:api');
 Route::get('/product/{id}', 'ProductsController@show');
-Route::patch('/product/{id}', 'ProductsController@update');
+Route::patch('/product/{id}', 'ProductsController@update')->middleware('auth:api');
 // Route::post('/products', 'ProductsController@store')->middleware('auth:api');
 Route::delete('/product/{id}', 'ProductsController@destroy')->middleware('auth:api');
