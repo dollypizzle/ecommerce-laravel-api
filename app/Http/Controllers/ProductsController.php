@@ -2,76 +2,87 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\Repositories\Products\ProductsRepository;
 use App\Products;
-use Illuminate\Http\Request;
-use Validator;
 
 class ProductsController extends Controller
 {
+    protected $products_repository;
+
+    public function __construct(ProductsRepository $products_repository)
+    {
+        $this->products_repository = $products_repository;
+    }
+
     public function index()
     {
-        $products = Products::get();
-
-        return response($products, 200);
-    }
-
-    public function store(Request $request)
-    {
-        $inputs = $request->all();
-        $products = Products::Create($inputs);
-
-        $response = [
-            'success' => true,
-            'message' => 'Products stored successfully.',
-            'data' => $products,
-        ];
-
-        return response()->json($response, 200);
-    }
-
-    public function show(Products $products, $id)
-    {
-
-        $products = Products::find($id);
-
-        if (is_null($products)) {
-            $response = [
-                'success' => false,
-                'data' => 'Empty',
-                'message' => 'Products not found.'
-            ];
-            return response()->json($response, 404);
-        }
-
-        $response = [
-            'success' => true,
-            'data' => $products,
-            'message' => 'Products retrieved successfully.'
-        ];
-
-        return response()->json($response, 200);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $products = Products::find($id);
-        $products->update($request->all());
+        $products = $this->products_repository->index();
 
         return response()->json([
-            'success' => true,
-            'data' => $products,
-            "message" => "Product updated successfully"
+            'products' => $products,
         ], 200);
     }
 
-    public function destroy($id)
+    public function store()
     {
-        $products = Products::findOrFail($id);
-        $products->delete();
+        $input = request()->validate([
+            'name' => 'required|string',
+            'brand' => 'required|string',
+            'price' => 'required|numeric',
+            'image' => 'required|string',
+            'description' => 'required|string'
+        ]);
+
+        $input['owner_id'] = auth()->id();
+
+        $product = $this->products_repository->store($input);
+
+        $response = [
+            'success' => true,
+            'data' => $product,
+            'message' => 'Product created successfully.',
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function show(Products $products)
+    {
+        return response()->json([
+            'product' => $products,
+        ], 200);
+    }
+
+    public function update(Products $products)
+    {
+        $this->authorize('update', $products);
+
+        $input = request()->validate([
+            'name' => 'required|string',
+            'brand' => 'required|string',
+            'price' => 'required|numeric',
+            'image' => 'required|string',
+            'description' => 'required|string'
+        ]);
+
+        $this->products_repository->update($products, $input);
 
         return response()->json([
             'success' => true,
-            "message" => "Product deleted"
+            'product' => $products,
+            "message" => "Product updated successfully"
+        ], 200);
+
+    }
+
+    public function destroy(Products $products)
+    {
+        $products = $this->products_repository->destroy($products);
+
+        return response()->json([
+            'success' => true,
+            'product' => $products,
+            "message" => "Product deleted successfully"
         ], 200);
     }
 }

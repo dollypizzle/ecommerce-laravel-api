@@ -39,6 +39,6 @@ $factory->define(Products::class, function (Faker $faker) {
         'brand' => $faker->sentence,
         'image' => $faker->sentence,
         'price' => $faker->randomNumber,
-        'description' => $faker->sentences
+        'description' => $faker->sentence
     ];
 });

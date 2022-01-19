@@ -2,18 +2,21 @@
 
 namespace App\Data\Repositories\Products;
 
+use App\Products;
 use Illuminate\Http\Request;
 
 interface EloquentRepository
 {
-    public function all();
 
-    public function create();
+    public function index();
 
-    public function show($id);
+    public function store($input);
 
-    public function update(Request $request, $id);
+    public function show(Products $products);
 
-    public function delete($id);
+    public function update($products, $input);
+
+    public function destroy($products);
 
 }
+

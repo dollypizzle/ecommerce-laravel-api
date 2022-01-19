@@ -38,10 +38,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // public function products()
-    // {
-    //     return $this->hasMany(Products::class);
-    // }
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'owner_id');
+    }
 
     public function createAccessToken($user)
     {

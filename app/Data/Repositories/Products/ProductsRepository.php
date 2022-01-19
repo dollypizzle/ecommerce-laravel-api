@@ -9,51 +9,37 @@ use Illuminate\Support\Facades\Auth;
 class ProductsRepository implements EloquentRepository
 {
 
-    public function all()
-    {
-        $products = Products::all();
+    protected $products;
 
-        return $products;
+    public function __construct(Products $products)
+    {
+        $this->products = $products;
     }
 
-    public function create()
+
+    public function index()
     {
-        // $inputs = $request->all();
-        // return Products::create($inputs);
-
-        request()->validate([
-            'name' => 'required|string',
-            'brand' => 'required|string',
-            'image' => 'required|string',
-            'description' => 'required|string',
-            'price' => 'required|numeric',
-        ]);
-
-        $products = Products::create([
-            'owner_id' => Auth::id(),
-            'name' => request('name'),
-            'brand' => request('brand'),
-            'image' => request('image'),
-            'price' => request('price'),
-            'description' => request('description'),
-        ]);
-
-        return $products;
+        return $this->products->all();
     }
 
-    public function show($id)
+    public function store($input)
     {
-        return Products::find($id);
+        return $this->products->create($input);
     }
 
-    public function update(Request $request, $id)
+    public function show(Products $products)
     {
-        return Products::find($id);
+        return $products->get($products);
     }
 
-    public function delete($id)
+    public function update($products, $input)
     {
-        return Products::findOrFail($id)->destroy($id);
+        return $products->update($input);
+    }
+
+    public function destroy($products)
+    {
+        return $products->delete();
     }
 }
 
